@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大学智慧·职场晋升修炼</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #faf5eb 0%, #fdf8f3 50%, #f5f0e8 100%);
+            min-height: 100vh;
+            color: #4a4a4a;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* 背景装饰 */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .deco-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        .deco-1 { width: 300px; height: 300px; background: linear-gradient(135deg, #e8c17a, #d4a84b); top: -100px; right: -100px; }
+        .deco-2 { width: 200px; height: 200px; background: linear-gradient(135deg, #7db89e, #5a9a7a); bottom: 20%; left: -80px; }
+        .deco-3 { width: 150px; height: 150px; background: linear-gradient(135deg, #e8a87c, #d4865a); top: 40%; right: -50px; }
+
+        /* 页面通用 */
+        .page { display: none; position: relative; z-index: 1; animation: fadeIn 0.5s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounceIn { 0% { opacity: 0; transform: scale(0.8); } 50% { transform: scale(1.05); } 100% { opacity: 1; transform: scale(1); } }
+
+        /* 封面页 */
+        .cover-header { text-align: center; padding: 40px 0 30px; }
+        .cover-badge { display: inline-block; background: linear-gradient(135deg, #7db89e, #5a9a7a); color: white; padding: 8px 20px; border-radius: 20px; font-size: 0.85rem; margin-bottom: 20px; }
+        .cover-title { font-size: 2.2rem; font-weight: 700; background: linear-gradient(135deg, #d4865a, #e8a87c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px; }
+        .cover-subtitle { font-size: 1.1rem; color: #888; margin-bottom: 30px; }
+
+        .timeline-preview { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); margin-bottom: 30px; }
+        .timeline-title { font-size: 0.95rem; color: #666; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+        .timeline-track { display: flex; justify-content: space-between; align-items: center; position: relative; padding: 0 5px; }
+        .timeline-node { display: flex; flex-direction: column; align-items: center; gap: 8px; flex: 1; }
+        .timeline-dot { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .node-0 .timeline-dot { background: #ffe4c4; }
+        .node-1 .timeline-dot { background: #d4edda; }
+        .node-2 .timeline-dot { background: #cce5ff; }
+        .node-3 .timeline-dot { background: #e2d9f3; }
+        .node-4 .timeline-dot { background: #ffd700; }
+        .timeline-label { font-size: 0.7rem; color: #888; text-align: center; max-width: 60px; }
+        .timeline-line { position: absolute; top: 20px; left: 50px; right: 50px; height: 3px; background: linear-gradient(90deg, #ffe4c4, #d4edda, #cce5ff, #e2d9f3, #ffd700); border-radius: 2px; z-index: -1; }
+
+        /* 按钮样式 */
+        .main-btn { width: 100%; padding: 18px 40px; border: none; border-radius: 16px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+        .btn-primary { background: linear-gradient(135deg, #e8a87c, #d4865a); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(212, 134, 90, 0.4); }
+        .btn-success { background: linear-gradient(135deg, #7db89e, #5a9a7a); color: white; }
+        .btn-secondary { background: linear-gradient(135deg, #c9b8a8, #a89888); color: white; }
+
+        /* 学习页 */
+        .study-header { text-align: center; padding: 20px 0; margin-bottom: 20px; }
+        .study-badge { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #ffe4c4, #ffd4a4); color: #a86830; padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; margin-bottom: 15px; }
+        .study-title { font-size: 1.6rem; color: #4a4a4a; font-weight: 700; }
+        .study-desc { font-size: 0.95rem; color: #888; margin-top: 8px; }
+
+        /* 学习模块 */
+        .study-module { background: white; border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
+        .study-module:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+        .study-module.completed { background: linear-gradient(135deg, #f0fff4, #e8f5e9); border-color: #7db89e; }
+        .module-header { display: flex; justify-content: space-between; align-items: center; }
+        .module-title { display: flex; align-items: center; gap: 12px; }
+        .module-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+        .icon-0 { background: #ffe4c4; }
+        .icon-1 { background: #d4edda; }
+        .icon-2 { background: #cce5ff; }
+        .module-name { font-size: 1.1rem; font-weight: 600; color: #4a4a4a; }
+        .module-badge { padding: 4px 12px; border-radius: 10px; font-size: 0.75rem; font-weight: 600; }
+        .badge-required { background: #ffe4c4; color: #a86830; }
+        .module-content { font-size: 0.9rem; color: #888; margin-top: 10px; padding-left: 57px; }
+        .check-icon { color: #7db89e; font-weight: bold; }
+
+        /* 详情展开 */
+        .detail-section { margin-top: 15px; padding-top: 15px; border-top: 1px dashed #e0e0e0; display: none; }
+        .detail-section.show { display: block; animation: slideDown 0.3s ease; }
+        .detail-card { background: #fafafa; border-radius: 12px; padding: 18px; margin-bottom: 12px; border-left: 4px solid #e8a87c; }
+        .detail-title { font-size: 1rem; font-weight: 600; color: #4a4a4a; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .detail-text { font-size: 0.9rem; color: #666; line-height: 1.7; }
+        .detail-list { list-style: none; margin-top: 12px; }
+        .detail-list li { font-size: 0.9rem; color: #555; padding: 8px 0; padding-left: 20px; position: relative; }
+        .detail-list li::before { content: "◆"; position: absolute; left: 0; color: #e8a87c; font-size: 0.7rem; }
+
+        /* 八条目网格 */
+        .eight-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+        .eight-item { background: white; border-radius: 10px; padding: 12px; text-align: center; border: 1px solid #eee; }
+        .eight-item .num { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #e8a87c, #d4865a); color: white; font-size: 0.75rem; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 6px; }
+        .eight-item .name { font-weight: 600; font-size: 0.95rem; color: #4a4a4a; }
+        .eight-item .sub { font-size: 0.75rem; color: #888; margin-top: 3px; }
+
+        /* 完成按钮 */
+        .complete-btn { width: 100%; padding: 16px 30px; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 15px; transition: all 0.3s; }
+        .btn-learn { background: linear-gradient(135deg, #ffe4c4, #ffd4a4); color: #a86830; }
+        .btn-understand { background: linear-gradient(135deg, #d4edda, #c4e4c4); color: #4a8a5a; }
+        .btn-enter { background: linear-gradient(135deg, #7db89e, #5a9a7a); color: white; font-size: 1.1rem; padding: 20px 40px; }
+        .btn-enter:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(125, 184, 158, 0.4); }
+
+        /* 进度条 */
+        .progress-bar { background: #f0f0f0; border-radius: 10px; height: 8px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #7db89e, #5a9a7a); border-radius: 10px; transition: width 0.5s ease; }
+        .progress-text { text-align: center; font-size: 0.9rem; color: #888; margin-bottom: 20px; }
+
+        /* 进入职场大按钮 */
+        .enter-section { text-align: center; padding: 30px 0; display: none; }
+        .enter-section.show { display: block; animation: bounceIn 0.5s ease; }
+        .enter-icon { font-size: 3rem; margin-bottom: 15px; }
+        .enter-text { font-size: 1rem; color: #7db89e; margin-bottom: 20px; font-weight: 600; }
+
+        /* 关卡概览页 */
+        .level-overview { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .overview-header { text-align: center; margin-bottom: 15px; }
+        .overview-badge { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #cce5ff, #b8d9ff); color: #4a7ab8; padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; margin-bottom: 12px; }
+        .overview-title { font-size: 1.4rem; font-weight: 700; color: #4a4a4a; margin-bottom: 5px; }
+        .overview-subtitle { font-size: 0.95rem; color: #888; }
+
+        /* 子关卡列表 */
+        .sub-levels { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; max-height: 400px; overflow-y: auto; }
+        .sub-level-btn { display: flex; align-items: center; gap: 12px; padding: 12px 15px; background: #fafafa; border-radius: 12px; border: 2px solid transparent; cursor: pointer; transition: all 0.3s; text-align: left; }
+        .sub-level-btn:hover { border-color: #e8a87c; background: #fff9f5; }
+        .sub-level-btn.completed { background: #f0fff4; border-color: #7db89e; }
+        .sub-level-num { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #e8a87c, #d4865a); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; }
+        .sub-level-btn.completed .sub-level-num { background: linear-gradient(135deg, #7db89e, #5a9a7a); }
+        .sub-level-info { flex: 1; min-width: 0; }
+        .sub-level-title { font-weight: 600; color: #4a4a4a; font-size: 0.95rem; margin-bottom: 2px; }
+        .sub-level-desc { font-size: 0.8rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sub-level-arrow { color: #ccc; font-size: 1rem; flex-shrink: 0; }
+
+        /* 关卡页 */
+        .level-header { text-align: center; padding: 15px 0; margin-bottom: 15px; }
+        .level-badge { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #cce5ff, #b8d9ff); color: #4a7ab8; padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; margin-bottom: 10px; }
+        .level-title { font-size: 1.4rem; font-weight: 700; color: #4a4a4a; margin-bottom: 6px; }
+        .level-subtitle { font-size: 0.95rem; color: #888; }
+
+        /* 关卡卡片 */
+        .level-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); margin-bottom: 15px; }
+        .situation-label { font-size: 0.8rem; color: #888; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .situation-text { font-size: 1rem; color: #4a4a4a; line-height: 1.7; margin-bottom: 20px; }
+
+        /* 选项按钮 */
+        .option-btn { width: 100%; padding: 14px 16px; border: 2px solid #e8e8e8; border-radius: 12px; background: white; font-size: 0.95rem; color: #4a4a4a; text-align: left; cursor: pointer; margin-bottom: 10px; transition: all 0.3s; display: flex; align-items: flex-start; gap: 10px; }
+        .option-btn:hover:not(:disabled) { border-color: #e8a87c; background: #fff9f5; }
+        .option-btn:disabled { cursor: not-allowed; opacity: 0.7; }
+        .option-btn.correct { border-color: #7db89e; background: #f0fff4; }
+        .option-btn.wrong { border-color: #e85a5a; background: #fff5f5; }
+        .option-letter { width: 26px; height: 26px; border-radius: 50%; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.85rem; color: #888; flex-shrink: 0; }
+        .option-btn.correct .option-letter { background: #7db89e; color: white; }
+        .option-btn.wrong .option-letter { background: #e85a5a; color: white; }
+
+        /* 解析 */
+        .analysis { background: linear-gradient(135deg, #fff9f5, #fff5ee); border-radius: 12px; padding: 15px; margin-top: 15px; display: none; border-left: 4px solid #e8a87c; }
+        .analysis.show { display: block; animation: slideDown 0.3s ease; }
+        .analysis-title { font-weight: 600; color: #d4865a; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; font-size: 0.9rem; }
+        .analysis-text { font-size: 0.9rem; color: #666; line-height: 1.6; }
+
+        /* 继续按钮 */
+        .continue-btn { width: 100%; padding: 16px 40px; border: none; border-radius: 14px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 15px; transition: all 0.3s; display: none; }
+        .continue-btn.show { display: block; }
+        .continue-btn.btn-next { background: linear-gradient(135deg, #e8a87c, #d4865a); color: white; }
+        .continue-btn.btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(212, 134, 90, 0.4); }
+        .continue-btn.btn-back { background: linear-gradient(135deg, #e0e0e0, #d0d0d0); color: #666; margin-top: 10px; }
+
+        /* 结局页 */
+        .result-header { text-align: center; padding: 30px 0 20px; }
+        .result-icon { font-size: 4rem; margin-bottom: 15px; }
+        .result-title { font-size: 1.8rem; font-weight: 700; color: #4a4a4a; margin-bottom: 8px; }
+        .result-subtitle { font-size: 1rem; color: #888; }
+        .result-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .result-score { text-align: center; padding-bottom: 15px; border-bottom: 1px dashed #e0e0e0; margin-bottom: 15px; }
+        .score-num { font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, #e8a87c, #d4865a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .score-label { font-size: 0.85rem; color: #888; }
+        .result-quote { font-size: 1rem; color: #4a4a4a; text-align: center; line-height: 1.7; margin-bottom: 15px; font-style: italic; }
+        .result-tip { background: linear-gradient(135deg, #f0fff4, #e8f5e9); border-radius: 12px; padding: 15px; text-align: center; }
+        .tip-title { font-weight: 600; color: #5a9a7a; margin-bottom: 6px; font-size: 0.9rem; }
+        .tip-text { font-size: 0.85rem; color: #666; line-height: 1.5; }
+
+        /* 进度指示 */
+        .level-progress { display: flex; justify-content: center; gap: 6px; margin-bottom: 15px; }
+        .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: #e0e0e0; transition: all 0.3s; }
+        .progress-dot.active { background: #7db89e; }
+        .progress-dot.current { background: #e8a87c; transform: scale(1.3); }
+    </style>
+</head>
+<body>
+    <!-- 背景装饰 -->
+    <div class="bg-decoration">
+        <div class="deco-circle deco-1"></div>
+        <div class="deco-circle deco-2"></div>
+        <div class="deco-circle deco-3"></div>
+    </div>
+
+    <div class="container">
+        <!-- 封面页 -->
+        <div id="page-cover" class="page active">
+            <div class="cover-header">
+                <div class="cover-badge">📜 源于《大学》智慧</div>
+                <h1 class="cover-title">职场晋升修炼</h1>
+                <p class="cover-subtitle">从校园到职场，20个真实场景陪你成长</p>
+            </div>
+
+            <div class="timeline-preview">
+                <div class="timeline-title">📍 你的成长路线</div>
+                <div class="timeline-track">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-node node-0"><div class="timeline-dot">📚</div><div class="timeline-label">毕业求职</div></div>
+                    <div class="timeline-node node-1"><div class="timeline-dot">🌱</div><div class="timeline-label">职场新人</div></div>
+                    <div class="timeline-node node-2"><div class="timeline-dot">💼</div><div class="timeline-label">业务骨干</div></div>
+                    <div class="timeline-node node-3"><div class="timeline-dot">👑</div><div class="timeline-label">团队Leader</div></div>
+                    <div class="timeline-node node-4"><div class="timeline-dot">🚀</div><div class="timeline-label">行业领袖</div></div>
+                </div>
+            </div>
+
+            <button class="main-btn btn-primary" onclick="startGame()">🚀 开始修炼</button>
+        </div>
+
+        <!-- 学习页 -->
+        <div id="page-study" class="page">
+            <div class="study-header">
+                <div class="study-badge">📖 毕业前夜 · 装备学习</div>
+                <h2 class="study-title">《大学》智慧</h2>
+                <p class="study-desc">入职前，先掌握这些核心心法</p>
+            </div>
+
+            <div class="progress-text">学习进度：<span id="progress-text">0/3</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width: 0%"></div></div>
+
+            <!-- 总纲领 -->
+            <div class="study-module" id="module-0" onclick="toggleModule(0)">
+                <div class="module-header">
+                    <div class="module-title"><div class="module-icon icon-0">🧭</div><span class="module-name">总纲领</span></div>
+                    <span class="module-badge badge-required">核心必学</span>
+                </div>
+                <p class="module-content" id="content-0">明明德 · 亲民 · 止于至善</p>
+                <div class="detail-section" id="detail-0">
+                    <div class="detail-card">
+                        <div class="detail-title">🎯 总纲领是什么？</div>
+                        <p class="detail-text">《大学》开篇写道："大学之道，在明明德，在亲民，在止于至善。"这是整个儒家修身齐家治国平天下的核心框架。</p>
+                        <ul class="detail-list">
+                            <li><strong>明明德</strong> — 擦亮自己的品德，找回不被外物裹挟的清醒自我</li>
+                            <li><strong>亲民</strong> — 极致利他，你的价值=你连接多少人、帮多少人解决问题</li>
+                            <li><strong>止于至善</strong> — 知止而后有定，用长期主义对抗不确定性</li>
+                        </ul>
+                    </div>
+                    <button class="complete-btn btn-learn" onclick="event.stopPropagation(); completeModule(0)">✓ 我记住了</button>
+                </div>
+            </div>
+
+            <!-- 三纲领 -->
+            <div class="study-module" id="module-1" onclick="toggleModule(1)">
+                <div class="module-header">
+                    <div class="module-title"><div class="module-icon icon-1">⭐</div><span class="module-name">三纲领详解</span></div>
+                    <span class="module-badge badge-required">深度理解</span>
+                </div>
+                <p class="module-content" id="content-1">三个层次，层层递进</p>
+                <div class="detail-section" id="detail-1">
+                    <div class="detail-card">
+                        <div class="detail-title">🌱 第一层：明明德（内圣）</div>
+                        <p class="detail-text">明德=光明的德性。每个人都有光明的德性，但被私欲遮蔽了。修炼就是不断擦亮这面镜子——情绪稳定、认知清醒、不被外物定义。</p>
+                        <div style="background:#fff;padding:10px;border-radius:8px;margin-top:8px;"><strong style="color:#d4865a;">💡 职场启示</strong><p style="font-size:0.85rem;color:#666;margin-top:4px;">不被KPI绑架、不被领导情绪影响、不被同事评价左右。</p></div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="detail-title">🤝 第二层：亲民（外王）</div>
+                        <p class="detail-text">亲民=让别人因为你而变得更好。不是管理，是激发。当你身边的人都变得更好，你自然成为一个有影响力的人。</p>
+                        <div style="background:#fff;padding:10px;border-radius:8px;margin-top:8px;"><strong style="color:#d4865a;">💡 职场启示</strong><p style="font-size:0.85rem;color:#666;margin-top:4px;">帮助同事成功、帮领导分忧、帮客户解决问题。</p></div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="detail-title">🎯 第三层：止于至善（境界）</div>
+                        <p class="detail-text">止=边界。知道什么该做、什么不该做、什么时候该停。这是成功者与普通人的分水岭。</p>
+                        <div style="background:#fff;padding:10px;border-radius:8px;margin-top:8px;"><strong style="color:#d4865a;">💡 职场启示</strong><p style="font-size:0.85rem;color:#666;margin-top:4px;">不赚不该赚的钱、不站不该站的队、不争不该争的名。</p></div>
+                    </div>
+                    <button class="complete-btn btn-understand" onclick="event.stopPropagation(); completeModule(1)">✓ 我理解了</button>
+                </div>
+            </div>
+
+            <!-- 八条目 -->
+            <div class="study-module" id="module-2" onclick="toggleModule(2)">
+                <div class="module-header">
+                    <div class="module-title"><div class="module-icon icon-2">⚔️</div><span class="module-name">八条目</span></div>
+                    <span class="module-badge badge-required">武功秘籍</span>
+                </div>
+                <p class="module-content" id="content-2">内圣四关 + 外王四关 = 完整进阶路径</p>
+                <div class="detail-section" id="detail-2">
+                    <div class="detail-card">
+                        <div class="detail-title">🧘 内圣四关 — 向内求</div>
+                        <p class="detail-text">搞定自己的情绪、认知、内耗，打造内核稳定的超级个体。</p>
+                        <div class="eight-grid">
+                            <div class="eight-item"><div class="num">1</div><div class="name">格物</div><div class="sub">洞察本质</div></div>
+                            <div class="eight-item"><div class="num">2</div><div class="name">致知</div><div class="sub">建立认知</div></div>
+                            <div class="eight-item"><div class="num">3</div><div class="name">诚意</div><div class="sub">知行合一</div></div>
+                            <div class="eight-item"><div class="num">4</div><div class="name">正心</div><div class="sub">情绪稳定</div></div>
+                        </div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="detail-title">🌍 外王四关 — 向外求</div>
+                        <p class="detail-text">向外扩张影响力，从管好自己到影响世界。</p>
+                        <div class="eight-grid">
+                            <div class="eight-item"><div class="num">5</div><div class="name">修身</div><div class="sub">完成迭代</div></div>
+                            <div class="eight-item"><div class="num">6</div><div class="name">齐家</div><div class="sub">带好团队</div></div>
+                            <div class="eight-item"><div class="num">7</div><div class="name">治国</div><div class="sub">管理企业</div></div>
+                            <div class="eight-item"><div class="num">8</div><div class="name">平天下</div><div class="sub">影响行业</div></div>
+                        </div>
+                    </div>
+                    <button class="complete-btn btn-learn" onclick="event.stopPropagation(); completeModule(2)">✓ 我学会了</button>
+                </div>
+            </div>
+
+            <div class="enter-section" id="enter-section">
+                <div class="enter-icon">🎉</div>
+                <div class="enter-text">恭喜！已完成全部学习</div>
+                <button class="complete-btn btn-enter" onclick="enterWorkplace()">🎯 踏入职场 →</button>
+            </div>
+        </div>
+
+        <!-- 关卡1概览：职场新人 -->
+        <div id="page-level1-overview" class="page">
+            <div class="level-overview">
+                <div class="overview-header">
+                    <div class="overview-badge">🌱 职场第一年</div>
+                    <h2 class="overview-title">格物 · 致知</h2>
+                    <p class="overview-subtitle">洞察本质，建立认知</p>
+                </div>
+                <div class="sub-levels" id="level1-list"></div>
+            </div>
+            <button class="continue-btn btn-back" onclick="goToStudy()">← 返回学习页</button>
+        </div>
+
+        <!-- 关卡2概览：业务骨干 -->
+        <div id="page-level2-overview" class="page">
+            <div class="level-overview">
+                <div class="overview-header">
+                    <div class="overview-badge">💼 第三年</div>
+                    <h2 class="overview-title">诚意 · 正心</h2>
+                    <p class="overview-subtitle">知行合一，情绪稳定</p>
+                </div>
+                <div class="sub-levels" id="level2-list"></div>
+            </div>
+            <button class="continue-btn btn-back" onclick="goToLevel(1)">← 返回上一阶段</button>
+        </div>
+
+        <!-- 关卡3概览：团队Leader -->
+        <div id="page-level3-overview" class="page">
+            <div class="level-overview">
+                <div class="overview-header">
+                    <div class="overview-badge">👑 第五年</div>
+                    <h2 class="overview-title">修身 · 齐家</h2>
+                    <p class="overview-subtitle">内圣完成，带领团队</p>
+                </div>
+                <div class="sub-levels" id="level3-list"></div>
+            </div>
+            <button class="continue-btn btn-back" onclick="goToLevel(2)">← 返回上一阶段</button>
+        </div>
+
+        <!-- 关卡4概览：行业领袖 -->
+        <div id="page-level4-overview" class="page">
+            <div class="level-overview">
+                <div class="overview-header">
+                    <div class="overview-badge">🚀 第十年</div>
+                    <h2 class="overview-title">治国 · 平天下</h2>
+                    <p class="overview-subtitle">稳健治理，影响行业</p>
+                </div>
+                <div class="sub-levels" id="level4-list"></div>
+            </div>
+            <button class="continue-btn btn-back" onclick="goToLevel(3)">← 返回上一阶段</button>
+        </div>
+
+        <!-- 关卡1-1：数据迷雾 -->
+        <div id="page-1-1" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">🌱 关卡 1/20</div>
+                <h2 class="level-title">数据迷雾</h2>
+                <p class="level-subtitle">格物：透过现象看本质</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">你刚入职一家互联网公司，App用户流失严重，老板让你分析原因并给出方案。你会怎么做？</p>
+                <button class="option-btn" onclick="selectOption('1-1', 'A', true)"><span class="option-letter">A</span><span>先收集数据，找出关键流失节点</span></button>
+                <button class="option-btn" onclick="selectOption('1-1', 'B', false)"><span class="option-letter">B</span><span>模仿竞品策略，他们怎么做我们就怎么做</span></button>
+                <button class="option-btn" onclick="selectOption('1-1', 'C', false)"><span class="option-letter">C</span><span>直接问老板该怎么分析</span></button>
+                <div class="analysis" id="analysis-1-1">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>格物=透过现象看本质。</strong>数据是客观事实，是洞察本质的基础。没有数据支撑的分析都是空中楼阁。<br><br>💡 职场第一关：学会用数据说话，用事实说服人。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-1-1" onclick="nextSubLevel(1)">下一关 →</button>
+        </div>
+
+        <!-- 关卡1-2：沟通困境 -->
+        <div id="page-1-2" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">🌱 关卡 2/20</div>
+                <h2 class="level-title">沟通困境</h2>
+                <p class="level-subtitle">致知：建立有效沟通认知</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">你需要跨部门协作，但对接的老员工总是敷衍，消息已读不回，项目进度严重滞后。你怎么办？</p>
+                <button class="option-btn" onclick="selectOption('1-2', 'A', false)"><span class="option-letter">A</span><span>向领导告状，说对方不配合</span></button>
+                <button class="option-btn" onclick="selectOption('1-2', 'B', true)"><span class="option-letter">B</span><span>约对方当面聊，了解困难，找双赢方案</span></button>
+                <button class="option-btn" onclick="selectOption('1-2', 'C', false)"><span class="option-letter">C</span><span>算了，自己想办法搞定，不求人</span></button>
+                <div class="analysis" id="analysis-1-2">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>致知=建立正确的认知。</strong>沟通障碍往往来自信息不对称或利益冲突。先共情，再求解。<br><br>💡 职场沟通：先了解对方立场，再找解决方案。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-1-2" onclick="nextSubLevel(1)">下一关 →</button>
+        </div>
+
+        <!-- 关卡1-3：时间陷阱 -->
+        <div id="page-1-3" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">🌱 关卡 3/20</div>
+                <h2 class="level-title">时间陷阱</h2>
+                <p class="level-subtitle">格物致知：分清主次</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">每天都很忙，加班到很晚，但老板总说你效率低。一天下来好像什么都没完成。怎么破？</p>
+                <button class="option-btn" onclick="selectOption('1-3', 'A', false)"><span class="option-letter">A</span><span>继续努力，花更多时间工作</span></button>
+                <button class="option-btn" onclick="selectOption('1-3', 'B', true)"><span class="option-letter">B</span><span>记录一周时间分配，找出低效原因</span></button>
+                <button class="option-btn" onclick="selectOption('1-3', 'C', false)"><span class="option-letter">C</span><span>找领导谈，觉得是被针对了</span></button>
+                <div class="analysis" id="analysis-1-3">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>格物=分清主次，致知=找到规律。</strong>忙碌≠高效。方向错了，越努力越失败。先分析问题，再调整策略。<br><br>💡 职场新人误区：以时间换产出，以忙碌换成长。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-1-3" onclick="nextSubLevel(1)">下一关 →</button>
+        </div>
+
+        <!-- 关卡1-4：职场礼仪 -->
+        <div id="page-1-4" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot current"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">🌱 关卡 4/20</div>
+                <h2 class="level-title">称呼困惑</h2>
+                <p class="level-subtitle">致知：理解职场规则</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">入职第一天，你不知道该怎么称呼同事。叫"哥""姐"怕显得不专业，直接叫名字又怕不礼貌。该怎么办？</p>
+                <button class="option-btn" onclick="selectOption('1-4', 'A', false)"><span class="option-letter">A</span><span>一律叫"老师"，最安全</span></button>
+                <button class="option-btn" onclick="selectOption('1-4', 'B', true)"><span class="option-letter">B</span><span>观察同事之间怎么称呼，先听再说</span></button>
+                <button class="option-btn" onclick="selectOption('1-4', 'C', false)"><span class="option-letter">C</span><span>直接问对方该怎么称呼</span></button>
+                <div class="analysis" id="analysis-1-4">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>致知=观察学习，建立认知。</strong>职场有职场的规则，新人先观察再行动，是最稳妥的方式。<br><br>💡 职场礼仪的本质：尊重+得体，不是刻板规矩。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-1-4" onclick="nextSubLevel(1)">下一关 →</button>
+        </div>
+
+        <!-- 关卡1-5：背锅侠 -->
+        <div id="page-1-5" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot current"></div></div>
+                <div class="level-badge">🌱 关卡 5/20</div>
+                <h2 class="level-title">背锅困境</h2>
+                <p class="level-subtitle">格物：明辨是非</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">你接手了一个项目，前任留下了烂摊子。老板开会问责，你该怎么做？</p>
+                <button class="option-btn" onclick="selectOption('1-5', 'A', false)"><span class="option-letter">A</span><span>把责任推给前任，说不是自己造成的</span></button>
+                <button class="option-btn" onclick="selectOption('1-5', 'B', true)"><span class="option-letter">B</span><span>承认现状，分析原因，提出解决方案</span></button>
+                <button class="option-btn" onclick="selectOption('1-5', 'C', false)"><span class="option-letter">C</span><span>沉默不语，让老板自己判断</span></button>
+                <div class="analysis" id="analysis-1-5">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>格物=明辨是非，诚意=对结果负责。</strong>背锅有两种：一种是被冤枉，一种是替自己的选择买单。前任的锅是客观事实，你的态度是你的选择。<br><br>💡 成熟职场人：先解决问题，再谈责任归属。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-1-5" onclick="goToLevel(2)">进入下一阶段 →</button>
+        </div>
+
+        <!-- 关卡2-1：沉默的真相 -->
+        <div id="page-2-1" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">💼 关卡 6/20</div>
+                <h2 class="level-title">沉默的真相</h2>
+                <p class="level-subtitle">诚意：知行合一，敢说真话</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">你发现公司战略方向有问题，有数据支撑。但同事们都选择沉默，领导劝你别多管闲事。你怎么办？</p>
+                <button class="option-btn" onclick="selectOption('2-1', 'A', false)"><span class="option-letter">A</span><span>随大流，不表达不同意见</span></button>
+                <button class="option-btn" onclick="selectOption('2-1', 'B', true)"><span class="option-letter">B</span><span>私下找领导沟通，用数据支撑判断</span></button>
+                <button class="option-btn" onclick="selectOption('2-1', 'C', false)"><span class="option-letter">C</span><span>当众指出问题，让大家都知道</span></button>
+                <div class="analysis" id="analysis-2-1">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>诚意=知行合一，不自欺欺人。</strong>私下沟通是建设性的——给领导留面子，同时尽到责任。既不说假话，也不说伤人的话。<br><br>💡 职场成熟度：知道什么时候说、怎么说、对谁说。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-2-1" onclick="nextSubLevel(2)">下一关 →</button>
+        </div>
+
+        <!-- 关卡2-2：功劳之争 -->
+        <div id="page-2-2" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">💼 关卡 7/20</div>
+                <h2 class="level-title">功劳之争</h2>
+                <p class="level-subtitle">正心：不被情绪左右</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">你主导的项目大获成功，但汇报时同事把主要功劳揽到自己身上，领导似乎默认了。你很委屈。</p>
+                <button class="option-btn" onclick="selectOption('2-2', 'A', false)"><span class="option-letter">A</span><span>当场反驳，把事情说清楚</span></button>
+                <button class="option-btn" onclick="selectOption('2-2', 'B', false)"><span class="option-letter">B</span><span>忍气吞声，以后不这么努力了</span></button>
+                <button class="option-btn" onclick="selectOption('2-2', 'C', true)"><span class="option-letter">C</span><span>私下找领导，用数据说明自己的贡献</span></button>
+                <div class="analysis" id="analysis-2-2">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>正心=情绪稳定，不被愤怒支配。</strong>当场反驳显得幼稚，忍气吞声伤害自己。私下沟通、用事实说话，才是成熟的做法。<br><br>💡 职场智慧：让结果说话，让时间证明。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-2-2" onclick="nextSubLevel(2)">下一关 →</button>
+        </div>
+
+        <!-- 关卡2-3：晋升焦虑 -->
+        <div id="page-2-3" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">💼 关卡 8/20</div>
+                <h2 class="level-title">晋升焦虑</h2>
+                <p class="level-subtitle">诚意正心：内外兼修</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">你业绩出色但没被提拔，另一个业绩不如你的同事反而升职了。你开始怀疑努力的意义。</p>
+                <button class="option-btn" onclick="selectOption('2-3', 'A', false)"><span class="option-letter">A</span><span>立刻辞职，此处不留爷自有留爷处</span></button>
+                <button class="option-btn" onclick="selectOption('2-3', 'B', true)"><span class="option-letter">B</span><span>找领导沟通，了解自己的差距</span></button>
+                <button class="option-btn" onclick="selectOption('2-3', 'C', false)"><span class="option-letter">C</span><span>消极怠工，看谁笑到最后</span></button>
+                <div class="analysis" id="analysis-2-3">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>诚意=对结果诚实，正心=不被情绪裹挟。</strong>晋升不只看业绩，还看领导力、潜力等多维因素。主动沟通，了解游戏规则。<br><br>💡 职场真相：晋升需要的不只是能力，还有被看见的能力。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-2-3" onclick="nextSubLevel(2)">下一关 →</button>
+        </div>
+
+        <!-- 关卡2-4：办公室政治 -->
+        <div id="page-2-4" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot current"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">💼 关卡 9/20</div>
+                <h2 class="level-title">派系漩涡</h2>
+                <p class="level-subtitle">正心：不被纷争裹挟</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">公司里两个部门领导在暗暗较劲，双方都想拉拢你站队。你夹在中间，怎么处理？</p>
+                <button class="option-btn" onclick="selectOption('2-4', 'A', false)"><span class="option-letter">A</span><span>选择一边站队，跟着有势力的一方</span></button>
+                <button class="option-btn" onclick="selectOption('2-4', 'B', true)"><span class="option-letter">B</span><span>保持中立，专注工作，谁的事都配合</span></button>
+                <button class="option-btn" onclick="selectOption('2-4', 'C', false)"><span class="option-letter">C</span><span>两边都讨好，不表态</span></button>
+                <div class="analysis" id="analysis-2-4">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>正心=不被利益裹挟，诚意=对工作负责。</strong>派系斗争是职场常态，但你的价值在于解决问题的能力，而不是站队。<br><br>💡 聪明人的做法：保持专业，不选边站，让结果说话。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-2-4" onclick="nextSubLevel(2)">下一关 →</button>
+        </div>
+
+        <!-- 关卡2-5：能力瓶颈 -->
+        <div id="page-2-5" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot current"></div></div>
+                <div class="level-badge">💼 关卡 10/20</div>
+                <h2 class="level-title">成长天花板</h2>
+                <p class="level-subtitle">致知：持续学习</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">工作了三年，感觉每天都在重复，没有进步。想提升但不知道从哪开始，很焦虑。</p>
+                <button class="option-btn" onclick="selectOption('2-5', 'A', false)"><span class="option-letter">A</span><span>报很多课、考很多证，充实自己</span></button>
+                <button class="option-btn" onclick="selectOption('2-5', 'B', true)"><span class="option-letter">B</span><span>先找导师或领导聊聊，明确方向再行动</span></button>
+                <button class="option-btn" onclick="selectOption('2-5', 'C', false)"><span class="option-letter">C</span><span>换个公司换个环境，重新开始</span></button>
+                <div class="analysis" id="analysis-2-5">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>致知=知道自己的边界在哪里。</strong>学习的方向比努力更重要。漫无目的的学习只是安慰剂，有目标的练习才是成长。<br><br>💡 突破瓶颈：先定位，再定向，最后才是行动。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-2-5" onclick="goToLevel(3)">进入下一阶段 →</button>
+        </div>
+
+        <!-- 关卡3-1：刺头员工 -->
+        <div id="page-3-1" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">👑 关卡 11/20</div>
+                <h2 class="level-title">刺头员工</h2>
+                <p class="level-subtitle">修身：先修自己再修团队</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">你刚升职带团队，有个能力强的"刺头"经常不服管，还当众顶撞你。你怎么处理？</p>
+                <button class="option-btn" onclick="selectOption('3-1', 'A', false)"><span class="option-letter">A</span><span>给他更大空间，让他自由发挥</span></button>
+                <button class="option-btn" onclick="selectOption('3-1', 'B', false)"><span class="option-letter">B</span><span>找机会把他边缘化甚至开除</span></button>
+                <button class="option-btn" onclick="selectOption('3-1', 'C', true)"><span class="option-letter">C</span><span>私下了解诉求，给他匹配的责任和授权</span></button>
+                <div class="analysis" id="analysis-3-1">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>齐家=让团队成员各安其位，激发善意而非消灭异己。</strong>能力强的人往往有自己的想法，给他合适的舞台，他会成为你最得力的干将。<br><br>💡 管理者的蜕变：从自己厉害，到让别人厉害。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-3-1" onclick="nextSubLevel(3)">下一关 →</button>
+        </div>
+
+        <!-- 关卡3-2：团队低效 -->
+        <div id="page-3-2" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">👑 关卡 12/20</div>
+                <h2 class="level-title">团队低效</h2>
+                <p class="level-subtitle">齐家：制度管人非人管人</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">团队成员总是应付了事，做事投机取巧，只求完成任务不求质量。你批评、鼓励、奖励过，但效果不明显。</p>
+                <button class="option-btn" onclick="selectOption('3-2', 'A', false)"><span class="option-letter">A</span><span>亲自盯每个环节，确保质量</span></button>
+                <button class="option-btn" onclick="selectOption('3-2', 'B', true)"><span class="option-letter">B</span><span>建立明确的流程和考核标准，奖优罚劣</span></button>
+                <button class="option-btn" onclick="selectOption('3-2', 'C', false)"><span class="option-letter">C</span><span>向领导抱怨团队不行，申请换人</span></button>
+                <div class="analysis" id="analysis-3-2">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>齐家=建立秩序，让每个人都知道自己的位置和责任。</strong>制度比人治更持久、公平。好的制度让坏人变好，坏的制度让好人变坏。<br><br>💡 管理的本质：不是控制人，而是激发人。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-3-2" onclick="nextSubLevel(3)">下一关 →</button>
+        </div>
+
+        <!-- 关卡3-3：夹心饼干 -->
+        <div id="page-3-3" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">👑 关卡 13/20</div>
+                <h2 class="level-title">夹心饼干</h2>
+                <p class="level-subtitle">修身：稳住自己才能稳住团队</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">老板给了个不可能完成的任务，团队抱怨你只当传话筒。你夹在中间两头受气。</p>
+                <button class="option-btn" onclick="selectOption('3-3', 'A', false)"><span class="option-letter">A</span><span>直接跟老板说任务不可能，争取调整</span></button>
+                <button class="option-btn" onclick="selectOption('3-3', 'B', true)"><span class="option-letter">B</span><span>先安抚团队，和老板协商拆解成可执行方案</span></button>
+                <button class="option-btn" onclick="selectOption('3-3', 'C', false)"><span class="option-letter">C</span><span>两边都顺从，谁都不得罪</span></button>
+                <div class="analysis" id="analysis-3-3">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>正心=稳住情绪，诚意=对结果负责。</strong>中层的价值就是承上启下——不是传话筒，而是转化器。<br><br>💡 管理者必备：向上管理预期，向下赋能执行。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-3-3" onclick="nextSubLevel(3)">下一关 →</button>
+        </div>
+
+        <!-- 关卡3-4：招聘困境 -->
+        <div id="page-3-4" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot current"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">👑 关卡 14/20</div>
+                <h2 class="level-title">招人难题</h2>
+                <p class="level-subtitle">齐家：识人用人</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">团队急需人手，但招聘了三个月都没找到合适的人。HR推荐了几个，你该用什么标准判断？</p>
+                <button class="option-btn" onclick="selectOption('3-4', 'A', false)"><span class="option-letter">A</span><span>看技术能力，技术强最重要</span></button>
+                <button class="option-btn" onclick="selectOption('3-4', 'B', true)"><span class="option-letter">B</span><span>看价值观和文化契合度，能力可以培养</span></button>
+                <button class="option-btn" onclick="selectOption('3-4', 'C', false)"><span class="option-letter">C</span><span>看薪资期望，找性价比最高的</span></button>
+                <div class="analysis" id="analysis-3-4">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>齐家=选对的人上车，错的人下车。</strong>能力可以培养，但价值观很难改变。一个态度不对的人，能力越强破坏力越大。<br><br>💡 招聘的本质：找志同道合的人，而不是找最优秀的人。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-3-4" onclick="nextSubLevel(3)">下一关 →</button>
+        </div>
+
+        <!-- 关卡3-5：绩效面谈 -->
+        <div id="page-3-5" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot current"></div></div>
+                <div class="level-badge">👑 关卡 15/20</div>
+                <h2 class="level-title">绩效困局</h2>
+                <p class="level-subtitle">诚意：坦诚沟通</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">年终绩效评估，有个下属表现一般但态度很好，你怎么写评语、怎么面谈？</p>
+                <button class="option-btn" onclick="selectOption('3-5', 'A', false)"><span class="option-letter">A</span><span>给高分，来年再观察</span></button>
+                <button class="option-btn" onclick="selectOption('3-5', 'B', true)"><span class="option-letter">B</span><span>如实评价，肯定态度，指出具体改进方向</span></button>
+                <button class="option-btn" onclick="selectOption('3-5', 'C', false)"><span class="option-letter">C</span><span>给低分，让他知难而退主动离开</span></button>
+                <div class="analysis" id="analysis-3-5">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>诚意=对结果诚实，不欺骗自己也不欺骗他人。</strong>好的绩效管理是帮助员工成长，而不是制造恐惧。<br><br>💡 绩效面谈的目的：让员工知道在哪里、需要去哪里、怎么去。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-3-5" onclick="goToLevel(4)">进入下一阶段 →</button>
+        </div>
+
+        <!-- 关卡4-1：转型抉择 -->
+        <div id="page-4-1" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">🚀 关卡 16/20</div>
+                <h2 class="level-title">转型抉择</h2>
+                <p class="level-subtitle">治国：稳健治理不走极端</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">行业寒冬来临，公司面临生死抉择。激进转型风险大，保守策略可能等死。董事会意见分歧。</p>
+                <button class="option-btn" onclick="selectOption('4-1', 'A', false)"><span class="option-letter">A</span><span>保守裁员，保住利润，活下去最重要</span></button>
+                <button class="option-btn" onclick="selectOption('4-1', 'B', false)"><span class="option-letter">B</span><span>All in转型，赌一把大的</span></button>
+                <button class="option-btn" onclick="selectOption('4-1', 'C', true)"><span class="option-letter">C</span><span>小规模试点新方向，同时维护核心业务</span></button>
+                <div class="analysis" id="analysis-4-1">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>治国=稳健治理，平天下=影响行业。</strong>激进和保守都是极端，中庸才是王道。小步快跑、迭代验证，是最稳健的转型策略。<br><br>💡 领导者的智慧：不做选择题，找到第三条路。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-4-1" onclick="nextSubLevel(4)">下一关 →</button>
+        </div>
+
+        <!-- 关卡4-2：人才流失 -->
+        <div id="page-4-2" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">🚀 关卡 17/20</div>
+                <h2 class="level-title">人才流失</h2>
+                <p class="level-subtitle">平天下：影响人才能影响行业</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">核心技术骨干被竞争对手高薪挖走，团队士气低落，其他人也蠢蠢欲动。你怎么稳住？</p>
+                <button class="option-btn" onclick="selectOption('4-2', 'A', false)"><span class="option-letter">A</span><span>给剩下的人全部涨薪，留住他们</span></button>
+                <button class="option-btn" onclick="selectOption('4-2', 'B', true)"><span class="option-letter">B</span><span>开全员会坦诚沟通，重新描绘愿景，建立文化认同</span></button>
+                <button class="option-btn" onclick="selectOption('4-2', 'C', false)"><span class="option-letter">C</span><span>追究HR责任，加强离职竞业限制</span></button>
+                <div class="analysis" id="analysis-4-2">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>平天下=影响行业，影响人。</strong>钱能留住人，但不能留住心。愿景、文化、成长空间，才是留住人才的根本。<br><br>💡 创始人的终极任务：建立一家能传承的公司。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-4-2" onclick="nextSubLevel(4)">下一关 →</button>
+        </div>
+
+        <!-- 关卡4-3：战略定力 -->
+        <div id="page-4-3" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot current"></div><div class="progress-dot"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">🚀 关卡 18/20</div>
+                <h2 class="level-title">战略定力</h2>
+                <p class="level-subtitle">止于至善：知止而后有定</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">公司成功了，各种机会纷至沓来——投资、收购、跨界合作...什么都能做。你怎么选择？</p>
+                <button class="option-btn" onclick="selectOption('4-3', 'A', false)"><span class="option-letter">A</span><span>全部都做，公司大了什么都要有</span></button>
+                <button class="option-btn" onclick="selectOption('4-3', 'B', false)"><span class="option-letter">B</span><span>只看ROI，哪里赚钱去哪里</span></button>
+                <button class="option-btn" onclick="selectOption('4-3', 'C', true)"><span class="option-letter">C</span><span>坚守核心战略，只做和使命相关的事</span></button>
+                <div class="analysis" id="analysis-4-3">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>止于至善=知道边界，不做什么比做什么更重要。</strong>成功最大的敌人是成功本身。诱惑太多，需要更强大的定力来拒绝。<br><br>💡 领导者的终极考验：知道什么该做，什么不该做。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-4-3" onclick="nextSubLevel(4)">下一关 →</button>
+        </div>
+
+        <!-- 关卡4-4：上市决策 -->
+        <div id="page-4-4" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot current"></div><div class="progress-dot"></div></div>
+                <div class="level-badge">🚀 关卡 19/20</div>
+                <h2 class="level-title">上市诱惑</h2>
+                <p class="level-subtitle">正心：不被名利蒙蔽</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">公司发展到一定规模，投资人劝你上市。但上市意味着更多的监管、更大的压力。你怎么考虑？</p>
+                <button class="option-btn" onclick="selectOption('4-4', 'A', false)"><span class="option-letter">A</span><span>当然要上，这是成功企业的标志</span></button>
+                <button class="option-btn" onclick="selectOption('4-4', 'B', true)"><span class="option-letter">B</span><span>先想清楚上市的目的是什么，再做决定</span></button>
+                <button class="option-btn" onclick="selectOption('4-4', 'C', false)"><span class="option-letter">C</span><span>不上市，保持独立，想怎么干就怎么干</span></button>
+                <div class="analysis" id="analysis-4-4">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>正心=不被名利蒙蔽，诚意=对初心诚实。</strong>上市是手段不是目的。想清楚为什么要上市，比要不要上市更重要。<br><br>💡 做企业的终极问题：你想建立一家什么样的公司？</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-4-4" onclick="nextSubLevel(4)">下一关 →</button>
+        </div>
+
+        <!-- 关卡4-5：文化传承 -->
+        <div id="page-4-5" class="page">
+            <div class="level-header">
+                <div class="level-progress"><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot active"></div><div class="progress-dot current"></div></div>
+                <div class="level-badge">🚀 关卡 20/20</div>
+                <h2 class="level-title">文化密码</h2>
+                <p class="level-subtitle">平天下：影响行业</p>
+            </div>
+            <div class="level-card">
+                <div class="situation-label">💼 你的情况</div>
+                <p class="situation-text">公司做大了，文化逐渐稀释。新员工越来越多，老员工越来越油。你怎么让文化传承下去？</p>
+                <button class="option-btn" onclick="selectOption('4-5', 'A', false)"><span class="option-letter">A</span><span>写一本企业文化手册，人手一本</span></button>
+                <button class="option-btn" onclick="selectOption('4-5', 'B', true)"><span class="option-letter">B</span><span>创始团队以身作则，把文化融入制度和招聘</span></button>
+                <button class="option-btn" onclick="selectOption('4-5', 'C', false)"><span class="option-letter">C</span><span>算了，文化这东西太虚，做强业绩就行</span></button>
+                <div class="analysis" id="analysis-4-5">
+                    <div class="analysis-title">📝 《大学》解读</div>
+                    <p class="analysis-text"><strong>明明德=先做好自己，亲民=影响他人。</strong>文化不是写出来的，是做出来的。创始人就是文化的第一定义者，你的每一个决定都在传递文化。<br><br>💡 真正的影响力：不是命令别人怎么做，而是让别人想成为你。</p>
+                </div>
+            </div>
+            <button class="continue-btn btn-next" id="next-btn-4-5" onclick="showResult()">查看结局 →</button>
+        </div>
+
+        <!-- 结局页 -->
+        <div id="page-result" class="page">
+            <div class="result-header">
+                <div class="result-icon" id="result-icon">🏆</div>
+                <h2 class="result-title" id="result-title">恭喜通关</h2>
+                <p class="result-subtitle" id="result-subtitle">你已经掌握了《大学》智慧</p>
+            </div>
+            <div class="result-card">
+                <div class="result-score">
+                    <div class="score-num" id="score-num">20</div>
+                    <div class="score-label">总得分 / 20关</div>
+                </div>
+                <p class="result-quote">"知止而后有定，定而后能静，<br>静而后能安，安而后能虑，<br>虑而后能得。"</p>
+                <div class="result-tip">
+                    <div class="tip-title">✨ 你的段位</div>
+                    <p class="tip-text" id="result-tip">你已经是行业领袖，明明德于天下！</p>
+                </div>
+            </div>
+            <button class="main-btn btn-secondary" onclick="restartGame()">🔄 重新修炼</button>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let studyProgress = [false, false, false];
+        let completedLevels = {};
+
+        // 关卡配置
+        const levelConfig = {
+            1: { name: '职场新人', badge: '🌱', pages: ['1-1', '1-2', '1-3', '1-4', '1-5'],
+                titles: ['数据迷雾', '沟通困境', '时间陷阱', '称呼困惑', '背锅困境'],
+                subtitles: ['透过现象看本质', '建立有效沟通', '分清主次', '理解职场规则', '明辨是非'] },
+            2: { name: '业务骨干', badge: '💼', pages: ['2-1', '2-2', '2-3', '2-4', '2-5'],
+                titles: ['沉默的真相', '功劳之争', '晋升焦虑', '派系漩涡', '成长天花板'],
+                subtitles: ['知行合一', '不被情绪左右', '内外兼修', '不被纷争裹挟', '持续学习'] },
+            3: { name: '团队Leader', badge: '👑', pages: ['3-1', '3-2', '3-3', '3-4', '3-5'],
+                titles: ['刺头员工', '团队低效', '夹心饼干', '招人难题', '绩效困局'],
+                subtitles: ['先修自己', '制度管人', '稳住自己', '识人用人', '坦诚沟通'] },
+            4: { name: '行业领袖', badge: '🚀', pages: ['4-1', '4-2', '4-3', '4-4', '4-5'],
+                titles: ['转型抉择', '人才流失', '战略定力', '上市诱惑', '文化密码'],
+                subtitles: ['稳健治理', '影响人', '知止有定', '不被名利蒙蔽', '影响行业'] }
+        };
+
+        function initLevelLists() {
+            for (let level = 1; level <= 4; level++) {
+                const list = document.getElementById('level' + level + '-list');
+                const config = levelConfig[level];
+                let html = '';
+                config.pages.forEach((pageId, index) => {
+                    const globalNum = (level - 1) * 5 + index + 1;
+                    const isCompleted = completedLevels[pageId];
+                    html += `<div class="sub-level-btn ${isCompleted ? 'completed' : ''}" onclick="startSubLevel(${level}, ${index + 1})">
+                        <div class="sub-level-num">${globalNum}</div>
+                        <div class="sub-level-info">
+                            <div class="sub-level-title">${config.titles[index]}</div>
+                            <div class="sub-level-desc">${config.subtitles[index]}</div>
+                        </div>
+                        <div class="sub-level-arrow">→</div>
+                    </div>`;
+                });
+                list.innerHTML = html;
+            }
+        }
+
+        function startGame() {
+            document.getElementById('page-cover').classList.remove('active');
+            document.getElementById('page-study').classList.add('active');
+        }
+
+        function goToStudy() {
+            hideAllPages();
+            document.getElementById('page-study').classList.add('active');
+        }
+
+        function toggleModule(index) {
+            const detail = document.getElementById('detail-' + index);
+            const isVisible = detail.classList.contains('show');
+            for (let i = 0; i < 3; i++) document.getElementById('detail-' + i).classList.remove('show');
+            if (!isVisible) detail.classList.add('show');
+        }
+
+        function completeModule(index) {
+            if (studyProgress[index]) return;
+            studyProgress[index] = true;
+            document.getElementById('module-' + index).classList.add('completed');
+            document.getElementById('content-' + index).innerHTML = '<span class="check-icon">✓</span> 已完成学习';
+            document.getElementById('detail-' + index).classList.remove('show');
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const completed = studyProgress.filter(p => p).length;
+            document.getElementById('progress-text').textContent = completed + '/3';
+            document.getElementById('progress-fill').style.width = (completed / 3 * 100) + '%';
+            if (completed === 3) document.getElementById('enter-section').classList.add('show');
+        }
+
+        function enterWorkplace() {
+            initLevelLists();
+            hideAllPages();
+            document.getElementById('page-level1-overview').classList.add('active');
+        }
+
+        function goToLevel(level) {
+            initLevelLists();
+            hideAllPages();
+            document.getElementById('page-level' + level + '-overview').classList.add('active');
+        }
+
+        function startSubLevel(level, subIndex) {
+            const pageId = levelConfig[level].pages[subIndex - 1];
+            hideAllPages();
+            document.getElementById('page-' + pageId).classList.add('active');
+        }
+
+        function nextSubLevel(level) {
+            const config = levelConfig[level];
+            const currentPageId = config.pages.find(p => document.getElementById('page-' + p)?.classList.contains('active'));
+            if (currentPageId) completedLevels[currentPageId] = true;
+            const currentIndex = config.pages.indexOf(currentPageId);
+            if (currentIndex < config.pages.length - 1) {
+                hideAllPages();
+                document.getElementById('page-' + config.pages[currentIndex + 1]).classList.add('active');
+            } else if (level < 4) {
+                goToLevel(level + 1);
+            }
+        }
+
+        function selectOption(pageId, option, isCorrect) {
+            const page = document.getElementById('page-' + pageId);
+            const buttons = page.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.disabled = true);
+            const selectedBtn = event.target.closest('.option-btn');
+            if (isCorrect) {
+                selectedBtn.classList.add('correct');
+                score++;
+            } else {
+                selectedBtn.classList.add('wrong');
+                buttons.forEach(btn => { if (btn.onclick.toString().includes('true')) btn.classList.add('correct'); });
+            }
+            document.getElementById('analysis-' + pageId).classList.add('show');
+            document.getElementById('next-btn-' + pageId).classList.add('show');
+        }
+
+        function showResult() {
+            completedLevels['4-5'] = true;
+            hideAllPages();
+            document.getElementById('page-result').classList.add('active');
+            let icon, title, subtitle, tip;
+            if (score <= 7) { icon = '🌱'; title = '职场萌新'; subtitle = '还在修炼的路上'; tip = '别急，慢慢来。先把《大学》的心法好好消化，用在每一天的工作中。'; }
+            else if (score <= 12) { icon = '💪'; title = '职场老手'; subtitle = '可以独当一面'; tip = '你已经具备了基本的职场智慧。继续修炼，向更高的段位进发！'; }
+            else if (score <= 15) { icon = '👑'; title = '团队Leader'; subtitle = '具备领导潜质'; tip = '你懂得带团队、激发善意。继续精进，有机会成为高管！'; }
+            else if (score <= 18) { icon = '🏆'; title = '企业高管'; subtitle = '治理有方'; tip = '你已经具备了企业治理的智慧。再进一步，就是行业领袖！'; }
+            else { icon = '🚀'; title = '行业领袖'; subtitle = '明明德于天下'; tip = '恭喜你！知止而后有定，你已经掌握了《大学》的最高智慧。'; }
+            document.getElementById('result-icon').textContent = icon;
+            document.getElementById('result-title').textContent = title;
+            document.getElementById('result-subtitle').textContent = subtitle;
+            document.getElementById('score-num').textContent = score;
+            document.getElementById('result-tip').textContent = tip;
+        }
+
+        function hideAllPages() { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); }
+
+        function restartGame() {
+            score = 0;
+            studyProgress = [false, false, false];
+            completedLevels = {};
+            hideAllPages();
+            for (let i = 0; i < 3; i++) {
+                document.getElementById('module-' + i).classList.remove('completed');
+                document.getElementById('detail-' + i).classList.remove('show');
+                document.getElementById('content-' + i).textContent = ['', '三个层次，层层递进', '内圣四关 + 外王四关 = 完整进阶路径'][i];
+            }
+            document.querySelectorAll('.option-btn').forEach(btn => { btn.disabled = false; btn.classList.remove('correct', 'wrong'); });
+            document.querySelectorAll('.analysis, .continue-btn').forEach(el => el.classList.remove('show'));
+            updateProgress();
+            document.getElementById('enter-section').classList.remove('show');
+            document.getElementById('page-cover').classList.add('active');
+        }
+    </script>
+</body>
+</html>
